@@ -1,5 +1,6 @@
 #[cfg(test)]
-use crate::token::Token;
+use crate::token::{Token, TokenKind};
+
 
 #[derive(PartialEq, Debug)]
 pub struct Lexer {
@@ -8,6 +9,7 @@ pub struct Lexer {
      read_position: usize, //next char position
      ch: char,
 }
+
 impl Lexer {
     pub fn new(input: &str) -> Self {
         let mut lexer = Lexer  {
@@ -21,7 +23,7 @@ impl Lexer {
     }
 
     fn read_char(&mut self) {
-        if self.read_position => self.input.len() {
+        if self.read_position >= self.input.len() {
             self.ch = '\0';
         } else {
             self.ch = self.input[self.read_position];
@@ -30,8 +32,31 @@ impl Lexer {
         self.read_position +=1;
     }
 
-    fn next_token(&self)  -> Token {
-        todo!();
+    fn next_token(&mut self)  -> Token {
+
+            println!("token: {}", self.ch);
+        let token = match self.ch {
+            '=' => Lexer::new_token(TokenKind::Assign, self.ch),
+            ';' => Lexer::new_token(TokenKind::Semicolon, self.ch),
+            '+' => Lexer::new_token(TokenKind::Plus, self.ch),
+            '{' => Lexer::new_token(TokenKind::LeftBrace, self.ch),
+            '}' => Lexer::new_token(TokenKind::RightBrace, self.ch),
+            ')' => Lexer::new_token(TokenKind::RightParen, self.ch),
+            '(' => Lexer::new_token(TokenKind::LeftParen, self.ch),
+            ',' => Lexer::new_token(TokenKind::Comma, self.ch),
+            '\0' => Token { kind: TokenKind::Eof, literal: "\0".to_string() },
+             _ =>  Lexer::new_token(TokenKind::Illegal,self.ch),
+        };
+
+        self.read_char();
+        token
+    }
+
+    fn new_token(kind: TokenKind, ch: char) -> Token {
+        Token {
+            kind,
+            literal: ch.to_string()
+        }
     }
 }
 
@@ -60,7 +85,7 @@ mod test {
                 literal: ")".to_string(),
             },
             Token {
-                kind: TokenKind::RightBrace,
+                kind: TokenKind::LeftBrace,
                 literal: "{".to_string(),
             },
             Token {
@@ -72,15 +97,20 @@ mod test {
                 literal: ",".to_string(),
             },
             Token {
-                kind: TokenKind::Eof,
+                kind: TokenKind::Semicolon,
                 literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::Eof,
+                literal: "\0".to_string(),
             },
         ];
 
-        let lexer = Lexer::new(input);
+        let mut lexer = Lexer::new(input);
 
         for (idx, exp_token) in expected.into_iter().enumerate() {
             let recv_token = lexer.next_token();
+            println!("{:?},{:?}",idx,exp_token);
             assert_eq!(exp_token.kind,recv_token.kind, "test[idx] - token type wrong. expected={},got={}", exp_token.kind, recv_token.kind);
             
             assert_eq!(exp_token.literal, recv_token.literal,"test[idx] - literal type wrong. expected={},got={}", exp_token.kind, recv_token.kind)
