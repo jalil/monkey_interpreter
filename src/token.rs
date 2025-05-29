@@ -26,8 +26,23 @@ pub enum TokenKind {
   LeftBrace,
   RightBrace,
 
+  Bang,
+  Asterisk,
+  Minus,
+  Slash,
+
+  GreaterThan,
+  LessThan,
+
   Function,
   Let,
+  True,
+  False,
+  If,
+  Else,
+  Return,
+  Equals,
+  NotEqual,
 }
 
 impl Display for TokenKind {
@@ -46,7 +61,34 @@ impl Display for TokenKind {
             TokenKind::Comma => write!(f, ","),
             TokenKind::Semicolon => write!(f, ";"),
             TokenKind::Function=> write!(f, "Function"),
+            TokenKind::Bang=> write!(f, "!"),
+            TokenKind::Minus=> write!(f, "-"),
             TokenKind::Let=> write!(f, "Let"),
+            TokenKind::Slash=> write!(f, "/"),
+            TokenKind::Asterisk=> write!(f, "*"),
+            TokenKind::LessThan=> write!(f, "<"),
+            TokenKind::GreaterThan=> write!(f, ">"),
+            TokenKind::True=> write!(f, "true"),
+            TokenKind::False=> write!(f, "false"),
+            TokenKind::If=> write!(f, "if"),
+            TokenKind::Return=> write!(f, "return"),
+            TokenKind::Else=> write!(f, "else"),
+            TokenKind::Equals=> write!(f, "=="),
+            TokenKind::NotEqual=> write!(f, "!="),
         }
     }
  }
+
+
+pub fn lookup_ident(identifier: &String) -> TokenKind {
+    match identifier.as_str() {
+        "fn" => TokenKind::Function,
+        "let" => TokenKind::Let,
+        "true" => TokenKind::True,
+        "false" => TokenKind::False,
+        "else" => TokenKind::Else,
+        "if" => TokenKind::If,
+        "return" => TokenKind::Return,
+        _ => TokenKind::Ident,
+    }
+}
