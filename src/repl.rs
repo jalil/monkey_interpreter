@@ -3,17 +3,23 @@ use crate::{lexer::Lexer, token::TokenKind};
 
 pub fn start(stdin: Stdin, mut stdout: Stdout) {
     loop {
-        write!(stdout, ">> ").expect("Should have written prompt >> ");
-        stdout.flush().expect("Should have flushed out");
 
-
-        let mut input = String::new();
-
-        if let Err(e) = stdin.read_line(&mut input) {
-            writeln!(stdout,"Error:{e}").expect("should have written an error message");
+        //Prompt user
+        if write!(stdout, ">> ").is_err() || stdout.flush().is_err(){
+            eprintln!("Failed to write prompt or flush output.");
             return;
         }
 
+
+        //Read user input
+        let mut input = String::new();
+        if stdin.read_line(&mut input).is_err()  {
+            writeln!(stdout,"Error reading input").ok();
+            return;
+        }
+
+
+        //Lex and print tokens
         let mut lexer = Lexer::new(input.as_str());
 
         loop  {
@@ -21,7 +27,10 @@ pub fn start(stdin: Stdin, mut stdout: Stdout) {
             if token.kind == TokenKind::Eof {
                 break;
             }
-            writeln!(stdout, "{token:?}").expect("Token should have been written");
+            if writeln!(stdout, "{token:?}").is_err() {
+                eprintln!("Failed to write token.");
+                return;
+            }
         }
 
     }
