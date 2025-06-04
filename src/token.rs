@@ -1,48 +1,49 @@
 use std::fmt;
-use std::fmt::Display;
+use std::{default, fmt::Display};
 
-#[derive(PartialEq,Debug)]
- pub struct Token {
+#[derive(PartialEq, Debug, Default, Clone)]
+pub struct Token {
     pub kind: TokenKind,
     pub literal: String,
- }
+}
 
-#[derive(PartialEq,Debug)]
+#[derive(PartialEq, Default, Debug, Clone)]
 pub enum TokenKind {
-  Illegal,
-  Eof,
+    #[default]
+    Illegal,
+    Eof,
 
-  Ident,
-  Int,
+    Ident,
+    Int,
 
-  Assign,
-  Plus,
+    Assign,
+    Plus,
 
-  Comma,
-  Semicolon,
+    Comma,
+    Semicolon,
 
-  LeftParen,
-  RightParen,
-  LeftBrace,
-  RightBrace,
+    LeftParen,
+    RightParen,
+    LeftBrace,
+    RightBrace,
 
-  Bang,
-  Asterisk,
-  Minus,
-  Slash,
+    Bang,
+    Asterisk,
+    Minus,
+    Slash,
 
-  GreaterThan,
-  LessThan,
+    GreaterThan,
+    LessThan,
 
-  Function,
-  Let,
-  True,
-  False,
-  If,
-  Else,
-  Return,
-  Equals,
-  NotEqual,
+    Function,
+    Let,
+    True,
+    False,
+    If,
+    Else,
+    Return,
+    Equals,
+    NotEqual,
 }
 
 impl Display for TokenKind {
@@ -53,32 +54,31 @@ impl Display for TokenKind {
             TokenKind::Ident => write!(f, "Ident"),
             TokenKind::Int => write!(f, "Int"),
             TokenKind::Assign => write!(f, "="),
-            TokenKind::Plus=> write!(f, "+"),
+            TokenKind::Plus => write!(f, "+"),
             TokenKind::LeftParen => write!(f, "("),
             TokenKind::RightParen => write!(f, ")"),
             TokenKind::LeftBrace => write!(f, "{{"),
             TokenKind::RightBrace => write!(f, "}}"),
             TokenKind::Comma => write!(f, ","),
             TokenKind::Semicolon => write!(f, ";"),
-            TokenKind::Function=> write!(f, "Function"),
-            TokenKind::Bang=> write!(f, "!"),
-            TokenKind::Minus=> write!(f, "-"),
-            TokenKind::Let=> write!(f, "Let"),
-            TokenKind::Slash=> write!(f, "/"),
-            TokenKind::Asterisk=> write!(f, "*"),
-            TokenKind::LessThan=> write!(f, "<"),
-            TokenKind::GreaterThan=> write!(f, ">"),
-            TokenKind::True=> write!(f, "true"),
-            TokenKind::False=> write!(f, "false"),
-            TokenKind::If=> write!(f, "if"),
-            TokenKind::Return=> write!(f, "return"),
-            TokenKind::Else=> write!(f, "else"),
-            TokenKind::Equals=> write!(f, "=="),
-            TokenKind::NotEqual=> write!(f, "!="),
+            TokenKind::Function => write!(f, "Function"),
+            TokenKind::Bang => write!(f, "!"),
+            TokenKind::Minus => write!(f, "-"),
+            TokenKind::Let => write!(f, "Let"),
+            TokenKind::Slash => write!(f, "/"),
+            TokenKind::Asterisk => write!(f, "*"),
+            TokenKind::LessThan => write!(f, "<"),
+            TokenKind::GreaterThan => write!(f, ">"),
+            TokenKind::True => write!(f, "true"),
+            TokenKind::False => write!(f, "false"),
+            TokenKind::If => write!(f, "if"),
+            TokenKind::Return => write!(f, "return"),
+            TokenKind::Else => write!(f, "else"),
+            TokenKind::Equals => write!(f, "=="),
+            TokenKind::NotEqual => write!(f, "!="),
         }
     }
- }
-
+}
 
 pub fn lookup_ident(identifier: &String) -> TokenKind {
     match identifier.as_str() {

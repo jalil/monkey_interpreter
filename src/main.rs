@@ -1,10 +1,10 @@
-pub mod lexer;
-pub mod token;
-pub mod repl;
 pub mod ast;
+pub mod lexer;
+pub mod repl;
+pub mod token;
+pub mod parser;
 
-
- use std::io;
+use std::io;
 
 use crate::repl::start;
 fn main() {

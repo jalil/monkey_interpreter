@@ -1,12 +1,11 @@
 #[cfg(test)]
-use crate::token::Token;
 use crate::token::{Token, TokenKind, lookup_ident};
 
 #[derive(PartialEq, Debug)]
 pub struct Lexer {
     input: Vec<char>,
-    position: usize,       // current char position
-    read_position: usize,  // next char position
+    position: usize,      // current char position
+    read_position: usize, // next char position
     ch: char,
 }
 
@@ -36,7 +35,7 @@ impl Lexer {
         self.skip_whitespace();
 
         let token = match self.ch {
-            '=' => { 
+            '=' => {
                 if self.peek() == '=' {
                     self.read_char();
                     Token {
@@ -44,7 +43,7 @@ impl Lexer {
                         literal: String::from("=="),
                     }
                 } else {
-                Lexer::new_token(TokenKind::Assign, self.ch)
+                    Lexer::new_token(TokenKind::Assign, self.ch)
                 }
             }
             ';' => Lexer::new_token(TokenKind::Semicolon, self.ch),
@@ -55,17 +54,17 @@ impl Lexer {
             '(' => Lexer::new_token(TokenKind::LeftParen, self.ch),
             ',' => Lexer::new_token(TokenKind::Comma, self.ch),
             '*' => Lexer::new_token(TokenKind::Asterisk, self.ch),
-            '!' => { 
+            '!' => {
                 if self.peek() == '=' {
                     self.read_char();
                     Token {
                         kind: TokenKind::NotEqual,
                         literal: String::from("!="),
-                    } 
-                    } else {
-                    Lexer::new_token(TokenKind::Bang, self.ch)
                     }
-            } 
+                } else {
+                    Lexer::new_token(TokenKind::Bang, self.ch)
+                }
+            }
             '<' => Lexer::new_token(TokenKind::LessThan, self.ch),
             '>' => Lexer::new_token(TokenKind::GreaterThan, self.ch),
             '-' => Lexer::new_token(TokenKind::Minus, self.ch),
@@ -103,9 +102,9 @@ impl Lexer {
         ch.is_ascii_digit()
     }
 
-    fn peek(&self)  -> char {
+    fn peek(&self) -> char {
         if self.read_position >= self.input.len() {
-          return  '\0';
+            return '\0';
         } else {
             return self.input[self.read_position];
         }
@@ -174,80 +173,302 @@ mod test {
         "#;
 
         let expected = vec![
-            Token { kind: TokenKind::Let, literal: "let".to_string() },
-            Token { kind: TokenKind::Ident, literal: "five".to_string() },
-            Token { kind: TokenKind::Assign, literal: "=".to_string() },
-            Token { kind: TokenKind::Int, literal: "5".to_string() },
-            Token { kind: TokenKind::Semicolon, literal: ";".to_string() },
-            Token { kind: TokenKind::Let, literal: "let".to_string() },
-            Token { kind: TokenKind::Ident, literal: "ten".to_string() },
-            Token { kind: TokenKind::Assign, literal: "=".to_string() },
-            Token { kind: TokenKind::Int, literal: "10".to_string() },
-            Token { kind: TokenKind::Semicolon, literal: ";".to_string() },
-            Token { kind: TokenKind::Let, literal: "let".to_string() },
-            Token { kind: TokenKind::Ident, literal: "add".to_string() },
-            Token { kind: TokenKind::Assign, literal: "=".to_string() },
-            Token { kind: TokenKind::Function, literal: "fn".to_string() },
-            Token { kind: TokenKind::LeftParen, literal: "(".to_string() },
-            Token { kind: TokenKind::Ident, literal: "x".to_string() },
-            Token { kind: TokenKind::Comma, literal: ",".to_string() },
-            Token { kind: TokenKind::Ident, literal: "y".to_string() },
-            Token { kind: TokenKind::RightParen, literal: ")".to_string() },
-            Token { kind: TokenKind::LeftBrace, literal: "{".to_string() },
-            Token { kind: TokenKind::Ident, literal: "x".to_string() },
-            Token { kind: TokenKind::Plus, literal: "+".to_string() },
-            Token { kind: TokenKind::Ident, literal: "y".to_string() },
-            Token { kind: TokenKind::Semicolon, literal: ";".to_string() },
-            Token { kind: TokenKind::RightBrace, literal: "}".to_string() },
-            Token { kind: TokenKind::Semicolon, literal: ";".to_string() },
-            Token { kind: TokenKind::Let, literal: "let".to_string() },
-            Token { kind: TokenKind::Ident, literal: "result".to_string() },
-            Token { kind: TokenKind::Assign, literal: "=".to_string() },
-            Token { kind: TokenKind::Ident, literal: "add".to_string() },
-            Token { kind: TokenKind::LeftParen, literal: "(".to_string() },
-            Token { kind: TokenKind::Ident, literal: "five".to_string() },
-            Token { kind: TokenKind::Comma, literal: ",".to_string() },
-            Token { kind: TokenKind::Ident, literal: "ten".to_string() },
-            Token { kind: TokenKind::RightParen, literal: ")".to_string() },
-            Token { kind: TokenKind::Semicolon, literal: ";".to_string() },
-            Token { kind: TokenKind::Bang, literal: "!".to_string() },
-            Token { kind: TokenKind::Minus, literal: "-".to_string() },
-            Token { kind: TokenKind::Slash, literal: "/".to_string() },
-            Token { kind: TokenKind::Asterisk, literal: "*".to_string() },
-            Token { kind: TokenKind::Int, literal: "5".to_string() },
-            Token { kind: TokenKind::Semicolon, literal: ";".to_string() },
-            Token { kind: TokenKind::Int, literal: "5".to_string() },
-            Token { kind: TokenKind::LessThan, literal: "<".to_string() },
-            Token { kind: TokenKind::Int, literal: "10".to_string() },
-            Token { kind: TokenKind::GreaterThan, literal: ">".to_string() },
-            Token { kind: TokenKind::Int, literal: "5".to_string() },
-            Token { kind: TokenKind::Semicolon, literal: ";".to_string() },
-            Token { kind: TokenKind::If, literal: "if".to_string() },
-            Token { kind: TokenKind::LeftParen, literal: "(".to_string() },
-            Token { kind: TokenKind::Int, literal: "5".to_string() },
-            Token { kind: TokenKind::LessThan, literal: "<".to_string() },
-            Token { kind: TokenKind::Int, literal: "10".to_string() },
-            Token { kind: TokenKind::RightParen, literal: ")".to_string() },
-            Token { kind: TokenKind::LeftBrace, literal: "{".to_string() },
-            Token { kind: TokenKind::Return, literal: "return".to_string() },
-            Token { kind: TokenKind::True, literal: "true".to_string() },
-            Token { kind: TokenKind::Semicolon, literal: ";".to_string() },
-            Token { kind: TokenKind::RightBrace, literal: "}".to_string() },
-            Token { kind: TokenKind::Else, literal: "else".to_string() },
-            Token { kind: TokenKind::LeftBrace, literal: "{".to_string() },
-            Token { kind: TokenKind::Return, literal: "return".to_string() },
-            Token { kind: TokenKind::False, literal: "false".to_string() },
-            Token { kind: TokenKind::Semicolon, literal: ";".to_string() },
-            Token { kind: TokenKind::RightBrace, literal: "}".to_string() },
-            Token { kind: TokenKind::Int, literal: "10".to_string() },
-            Token { kind: TokenKind::Equals, literal: "==".to_string() },
-            Token { kind: TokenKind::Int, literal: "10".to_string() },
-            Token { kind: TokenKind::Semicolon, literal: ";".to_string() },
-            Token { kind: TokenKind::Int, literal: "10".to_string() },
-            Token { kind: TokenKind::NotEqual, literal: "!=".to_string() },
-            Token { kind: TokenKind::Int, literal: "9".to_string() },
-            Token { kind: TokenKind::Semicolon, literal: ";".to_string() },
-            Token { kind: TokenKind::Eof, literal: "\0".to_string() },
+            Token {
+                kind: TokenKind::Let,
+                literal: "let".to_string(),
+            },
+            Token {
+                kind: TokenKind::Ident,
+                literal: "five".to_string(),
+            },
+            Token {
+                kind: TokenKind::Assign,
+                literal: "=".to_string(),
+            },
+            Token {
+                kind: TokenKind::Int,
+                literal: "5".to_string(),
+            },
+            Token {
+                kind: TokenKind::Semicolon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::Let,
+                literal: "let".to_string(),
+            },
+            Token {
+                kind: TokenKind::Ident,
+                literal: "ten".to_string(),
+            },
+            Token {
+                kind: TokenKind::Assign,
+                literal: "=".to_string(),
+            },
+            Token {
+                kind: TokenKind::Int,
+                literal: "10".to_string(),
+            },
+            Token {
+                kind: TokenKind::Semicolon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::Let,
+                literal: "let".to_string(),
+            },
+            Token {
+                kind: TokenKind::Ident,
+                literal: "add".to_string(),
+            },
+            Token {
+                kind: TokenKind::Assign,
+                literal: "=".to_string(),
+            },
+            Token {
+                kind: TokenKind::Function,
+                literal: "fn".to_string(),
+            },
+            Token {
+                kind: TokenKind::LeftParen,
+                literal: "(".to_string(),
+            },
+            Token {
+                kind: TokenKind::Ident,
+                literal: "x".to_string(),
+            },
+            Token {
+                kind: TokenKind::Comma,
+                literal: ",".to_string(),
+            },
+            Token {
+                kind: TokenKind::Ident,
+                literal: "y".to_string(),
+            },
+            Token {
+                kind: TokenKind::RightParen,
+                literal: ")".to_string(),
+            },
+            Token {
+                kind: TokenKind::LeftBrace,
+                literal: "{".to_string(),
+            },
+            Token {
+                kind: TokenKind::Ident,
+                literal: "x".to_string(),
+            },
+            Token {
+                kind: TokenKind::Plus,
+                literal: "+".to_string(),
+            },
+            Token {
+                kind: TokenKind::Ident,
+                literal: "y".to_string(),
+            },
+            Token {
+                kind: TokenKind::Semicolon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::RightBrace,
+                literal: "}".to_string(),
+            },
+            Token {
+                kind: TokenKind::Semicolon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::Let,
+                literal: "let".to_string(),
+            },
+            Token {
+                kind: TokenKind::Ident,
+                literal: "result".to_string(),
+            },
+            Token {
+                kind: TokenKind::Assign,
+                literal: "=".to_string(),
+            },
+            Token {
+                kind: TokenKind::Ident,
+                literal: "add".to_string(),
+            },
+            Token {
+                kind: TokenKind::LeftParen,
+                literal: "(".to_string(),
+            },
+            Token {
+                kind: TokenKind::Ident,
+                literal: "five".to_string(),
+            },
+            Token {
+                kind: TokenKind::Comma,
+                literal: ",".to_string(),
+            },
+            Token {
+                kind: TokenKind::Ident,
+                literal: "ten".to_string(),
+            },
+            Token {
+                kind: TokenKind::RightParen,
+                literal: ")".to_string(),
+            },
+            Token {
+                kind: TokenKind::Semicolon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::Bang,
+                literal: "!".to_string(),
+            },
+            Token {
+                kind: TokenKind::Minus,
+                literal: "-".to_string(),
+            },
+            Token {
+                kind: TokenKind::Slash,
+                literal: "/".to_string(),
+            },
+            Token {
+                kind: TokenKind::Asterisk,
+                literal: "*".to_string(),
+            },
+            Token {
+                kind: TokenKind::Int,
+                literal: "5".to_string(),
+            },
+            Token {
+                kind: TokenKind::Semicolon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::Int,
+                literal: "5".to_string(),
+            },
+            Token {
+                kind: TokenKind::LessThan,
+                literal: "<".to_string(),
+            },
+            Token {
+                kind: TokenKind::Int,
+                literal: "10".to_string(),
+            },
+            Token {
+                kind: TokenKind::GreaterThan,
+                literal: ">".to_string(),
+            },
+            Token {
+                kind: TokenKind::Int,
+                literal: "5".to_string(),
+            },
+            Token {
+                kind: TokenKind::Semicolon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::If,
+                literal: "if".to_string(),
+            },
+            Token {
+                kind: TokenKind::LeftParen,
+                literal: "(".to_string(),
+            },
+            Token {
+                kind: TokenKind::Int,
+                literal: "5".to_string(),
+            },
+            Token {
+                kind: TokenKind::LessThan,
+                literal: "<".to_string(),
+            },
+            Token {
+                kind: TokenKind::Int,
+                literal: "10".to_string(),
+            },
+            Token {
+                kind: TokenKind::RightParen,
+                literal: ")".to_string(),
+            },
+            Token {
+                kind: TokenKind::LeftBrace,
+                literal: "{".to_string(),
+            },
+            Token {
+                kind: TokenKind::Return,
+                literal: "return".to_string(),
+            },
+            Token {
+                kind: TokenKind::True,
+                literal: "true".to_string(),
+            },
+            Token {
+                kind: TokenKind::Semicolon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::RightBrace,
+                literal: "}".to_string(),
+            },
+            Token {
+                kind: TokenKind::Else,
+                literal: "else".to_string(),
+            },
+            Token {
+                kind: TokenKind::LeftBrace,
+                literal: "{".to_string(),
+            },
+            Token {
+                kind: TokenKind::Return,
+                literal: "return".to_string(),
+            },
+            Token {
+                kind: TokenKind::False,
+                literal: "false".to_string(),
+            },
+            Token {
+                kind: TokenKind::Semicolon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::RightBrace,
+                literal: "}".to_string(),
+            },
+            Token {
+                kind: TokenKind::Int,
+                literal: "10".to_string(),
+            },
+            Token {
+                kind: TokenKind::Equals,
+                literal: "==".to_string(),
+            },
+            Token {
+                kind: TokenKind::Int,
+                literal: "10".to_string(),
+            },
+            Token {
+                kind: TokenKind::Semicolon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::Int,
+                literal: "10".to_string(),
+            },
+            Token {
+                kind: TokenKind::NotEqual,
+                literal: "!=".to_string(),
+            },
+            Token {
+                kind: TokenKind::Int,
+                literal: "9".to_string(),
+            },
+            Token {
+                kind: TokenKind::Semicolon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::Eof,
+                literal: "\0".to_string(),
+            },
         ];
 
         let mut lexer = Lexer::new(input);
@@ -268,4 +489,3 @@ mod test {
         }
     }
 }
-
