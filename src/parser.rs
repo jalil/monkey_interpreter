@@ -9,6 +9,7 @@ pub struct Parser {
     pub lexer: Lexer,
     current_token: Token,
     peek_token: Token,
+    errors: Vec<String>
 }
 
 
@@ -18,6 +19,7 @@ impl Parser {
             lexer,
             current_token: Default::default(),
             peek_token: Default::default(),
+            errors: vec![],
         };
 
         parser.next_token();
@@ -83,10 +85,11 @@ impl Parser {
 
     }
        fn expect_peek(&mut self, token_kind: TokenKind) ->  bool {
-           if self.peek_token_is(token_kind) {
+           if self.peek_token_is(token_kind.clone()) {
                self.next_token();
                return true;
            }
+           self.peek_error(token_kind);
            false
        }
 
@@ -98,6 +101,18 @@ impl Parser {
        fn current_token_is(&self, token_kind: TokenKind)  -> bool {
            self.current_token.kind == token_kind
        }
+
+       fn errors(&self) -> &Vec<String> {
+          &self.errors
+       }
+
+       fn peek_error(&mut self, token_kind: TokenKind) {
+        let msg = format!(
+            "expected next token to be {}, got {} instead",
+            token_kind, self.peek_token.kind
+        );
+        self.errors.push(msg);
+       }
 }
 
 
@@ -107,7 +122,8 @@ mod test {
     use super::Parser;
     use crate::ast::StatementNode;
     use crate::ast::Node;
-
+    
+    #[test]
     fn test_let_statements() {
         let input  = r#"
         let x = 5;
@@ -118,6 +134,8 @@ mod test {
         let lexer = Lexer::new(input);
         let mut parser = Parser::new(lexer);
         let program = parser.parse_program();
+
+        check_parse_errors(parser);
 
         match program {
             Some(program) => {
@@ -164,5 +182,19 @@ mod test {
                 );
             }
         }
+    }
+
+    fn check_parse_errors(parser: Parser) {
+        let errors  = parser.errors();
+
+        if errors.len() == 0 {
+            return ;
+        }
+
+        for error in errors {
+            eprintln!("parser error: {}", error);
+        }
+
+        panic!("parse errors present");
     }
 }
