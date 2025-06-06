@@ -1,4 +1,3 @@
-#[cfg(test)]
 use crate::token::{Token, TokenKind, lookup_ident};
 
 #[derive(PartialEq, Debug)]

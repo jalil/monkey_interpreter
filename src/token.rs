@@ -1,7 +1,7 @@
 use std::fmt;
-use std::{default, fmt::Display};
+use std::{ fmt::Display};
 
-#[derive(PartialEq, Debug, Default, Clone)]
+#[derive(PartialEq, Debug, Default, Clone )]
 pub struct Token {
     pub kind: TokenKind,
     pub literal: String,

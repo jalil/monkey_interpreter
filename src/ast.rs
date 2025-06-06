@@ -1,5 +1,5 @@
 use crate::token::Token;
-use crate::ast::Node;
+
 // Trait for all AST nodes
 pub trait Node {
    fn token_literal(&self) -> String;
@@ -7,20 +7,20 @@ pub trait Node {
 }
 
 // Identifier type (used in LetStatement and Expression)
-#[derive(Debug)]
+#[derive(Debug, Default, Clone)]
 pub struct Identifier {
-   pub  name: String,
    pub  token: Token,
+   pub  value: String,
 }
 
 // Expression enum
 #[derive(Debug)]
-enum Expression {
+pub enum Expression {
     IdentifierNode(Identifier),
 }
 
 // LetStatement type (a kind of statement)
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct LetStatement {
    pub  token: Token,
    pub  name: Identifier,
@@ -45,7 +45,7 @@ impl Node for Identifier {
     }
 
     fn print_string(&self) -> String {
-        self.name.clone()
+        self.value.clone()
     }
 }
 
@@ -70,10 +70,12 @@ impl Node for LetStatement {
 
     fn print_string(&self) -> String {
         let mut out = String::new();
+
         out.push_str(&self.token_literal());
         out.push_str(" ");
         out.push_str(&self.name.print_string());
         out.push_str(" = ");
+
         if let Some(value) = &self.value {
             out.push_str(&value.print_string());
         }
@@ -83,16 +85,16 @@ impl Node for LetStatement {
 }
 
 impl Node for StatementNode {
-    fn token_literal(&self) -> String {
+   fn token_literal(&self) -> String {
         match self {
             StatementNode::Let(let_stmt) => let_stmt.token_literal(),
         }
     }
 
-    fn print_string(&self) -> String {
-        match self {
-            StatementNode::Let(let_stmt) => let_stmt.print_string(),
-        }
+   fn print_string(&self) -> String {
+        return match self {
+            Self::Let(let_stmt) => let_stmt.print_string(),
+        };
     }
 }
 
