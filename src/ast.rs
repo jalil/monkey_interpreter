@@ -27,10 +27,17 @@ pub struct LetStatement {
    pub  value: Option<Expression>,
 }
 
+#[derive(Debug, Default)]
+pub struct ReturnStatement {
+   pub  token: Token,
+   pub  return_value: Option<Expression>,
+}
+
 // StatementNode enum (wraps different statement types)
 #[derive(Debug)]
 pub enum StatementNode {
   Let(LetStatement),
+  Return(ReturnStatement),
 }
 
 // Program (top-level AST node)
@@ -88,12 +95,14 @@ impl Node for StatementNode {
    fn token_literal(&self) -> String {
         match self {
             StatementNode::Let(let_stmt) => let_stmt.token_literal(),
+            StatementNode::ReturnStatement(return_stmt) => return_stmt.token_literal(),
         }
     }
 
    fn print_string(&self) -> String {
         return match self {
             Self::Let(let_stmt) => let_stmt.print_string(),
+            Self::ReturnStatement(return_stmt) => return_stmt.print_string(),
         };
     }
 }
@@ -103,6 +112,7 @@ impl Node for Program {
         if self.statements.len() > 0 {
             match &self.statements[0] {
                 StatementNode::Let(let_stmt) => let_stmt.token_literal(),
+                StatementNode::ReturnStatement(return_stmt) => return_stmt.token_literal(),
             }
         } else {
             String::from("")
@@ -117,3 +127,13 @@ impl Node for Program {
         out
     }
 }
+impl Node for ReturnStatement {
+    fn token_literal(&self) -> String {
+        self.token.literal.clone()
+    }
+    fn print_string(&self) -> String {
+        todo!()
+    }
+
+}
+
